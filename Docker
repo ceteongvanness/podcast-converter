@@ -1,7 +1,17 @@
-# Dockerfile
 # Build stage
 FROM node:18-alpine AS builder
 WORKDIR /app
+
+# Add build arguments
+ARG AWS_REGION
+ARG AWS_ACCESS_KEY_ID
+ARG AWS_SECRET_ACCESS_KEY
+
+# Set environment variables for build
+ENV AWS_REGION=$AWS_REGION
+ENV AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID
+ENV AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY
+
 COPY package*.json ./
 RUN npm ci
 COPY . .
