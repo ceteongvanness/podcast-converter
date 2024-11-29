@@ -35,7 +35,7 @@ podcast-converter/
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/your-username/podcast-converter.git
+git clone https://github.com/ceteongvanness/podcast-converter.git
 cd podcast-converter
 ```
 
