@@ -1,26 +1,29 @@
 import { NextResponse } from 'next/server';
-import AWS from 'aws-sdk';
+import type AWS from 'aws-sdk';
 
-// Move AWS configuration inside the POST handler
+let polly: AWS.Polly | null = null;
+
+// Initialize Polly only when needed
+async function getPolly() {
+  if (!polly) {
+    const AWS = (await import('aws-sdk')).default;
+    polly = new AWS.Polly({
+      region: process.env.AWS_REGION || 'us-east-1',
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID || 'dummy',
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || 'dummy',
+      },
+    });
+  }
+  return polly;
+}
+
 export async function POST(request: Request) {
   try {
     const { text } = await request.json();
 
-    // Initialize AWS only when the API is called
-    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-      return NextResponse.json(
-        { error: 'AWS credentials not configured' },
-        { status: 500 }
-      );
-    }
-
-    const polly = new AWS.Polly({
-      region: process.env.AWS_REGION || 'us-east-1',
-      credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-      },
-    });
+    // Only initialize Polly when actually making a request
+    const pollyService = await getPolly();
 
     const params = {
       Text: text,
@@ -30,8 +33,7 @@ export async function POST(request: Request) {
     };
 
     try {
-      console.log('Converting text to speech...');
-      const response = await polly.synthesizeSpeech(params).promise();
+      const response = await pollyService.synthesizeSpeech(params).promise();
       
       if (!response.AudioStream) {
         throw new Error('No audio stream returned');
@@ -56,4 +58,9 @@ export async function POST(request: Request) {
       { status: 400 }
     );
   }
+}
+
+// Add a simple GET handler
+export async function GET() {
+  return NextResponse.json({ status: 'ok' });
 }
