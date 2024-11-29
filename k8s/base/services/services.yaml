@@ -1,0 +1,26 @@
+# services.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: frontend-service
+  namespace: podcast-converter
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 3000
+  selector:
+    app: frontend
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-service
+  namespace: podcast-converter
+spec:
+  type: ClusterIP
+  ports:
+  - port: 80
+    targetPort: 3001
+  selector:
+    app: backend
