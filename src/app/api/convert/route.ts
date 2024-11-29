@@ -1,29 +1,26 @@
 import { NextResponse } from 'next/server';
 import AWS from 'aws-sdk';
 
-// Configure AWS
-if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
-  throw new Error('AWS credentials not found');
-}
-
-const polly = new AWS.Polly({
-  region: process.env.AWS_REGION || 'us-east-1',
-  credentials: {
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  },
-});
-
+// Move AWS configuration inside the POST handler
 export async function POST(request: Request) {
   try {
     const { text } = await request.json();
 
-    if (!text) {
+    // Initialize AWS only when the API is called
+    if (!process.env.AWS_ACCESS_KEY_ID || !process.env.AWS_SECRET_ACCESS_KEY) {
       return NextResponse.json(
-        { error: 'Text is required' },
-        { status: 400 }
+        { error: 'AWS credentials not configured' },
+        { status: 500 }
       );
     }
+
+    const polly = new AWS.Polly({
+      region: process.env.AWS_REGION || 'us-east-1',
+      credentials: {
+        accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+      },
+    });
 
     const params = {
       Text: text,
