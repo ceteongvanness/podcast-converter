@@ -1,58 +1,41 @@
-# Podcast Converter Application
+# Podcast Converter
 
-Convert text content into podcast-style audio using AWS Polly text-to-speech service.
+A Next.js application that converts text content into podcast-style audio using AWS Polly text-to-speech service.
 
 ## Project Structure
 ```
 podcast-converter/
+├── .github/
+│   └── workflows/          # GitHub Actions workflows
+│       ├── ci.yml         # Continuous Integration
+│       └── cd.yml        # Continuous Deployment
 ├── src/
-│   ├── app/
-│   │   ├── api/
-│   │   │   └── convert/
-│   │   │       └── route.ts
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   ├── components/
-│   │   ├── Button.tsx
-│   │   └── TextArea.tsx
-│   └── lib/
-│       └── utils.ts
-├── k8s/
+│   ├── app/              # Next.js app directory
+│   ├── components/       # React components
+│   └── lib/             # Utility functions
+├── k8s/                 # Kubernetes manifests
 │   └── base/
 │       ├── deployments/
-│       │   ├── frontend-deployment.yaml
-│       │   └── backend-deployment.yaml
 │       ├── services/
-│       │   └── services.yaml
 │       ├── config/
-│       │   ├── configmap.yaml
-│       │   └── secrets.yaml
 │       ├── ingress/
-│       │   └── ingress.yaml
 │       └── monitoring/
-│           ├── prometheus-config.yaml
-│           ├── prometheus-deployment.yaml
-│           ├── grafana-deployment.yaml
-│           └── monitoring-services.yaml
-├── public/
-├── .env.local
-├── package.json
-└── README.md
+└── public/              # Static files
 ```
 
 ## Prerequisites
 
 - Node.js 18.x or later
 - npm or yarn
-- AWS Account with Polly access
-- Kubernetes cluster (for deployment)
 - Docker (for containerization)
+- AWS Account (for Polly service)
+- Kubernetes cluster (for deployment)
 
 ## Getting Started
 
 1. Clone the repository:
 ```bash
-git clone https://github.com/ceteongvanness/podcast-converter.git
+git clone https://github.com/your-username/podcast-converter.git
 cd podcast-converter
 ```
 
@@ -61,100 +44,88 @@ cd podcast-converter
 npm install
 ```
 
-3. Create `.env.local` file:
-```
-AWS_ACCESS_KEY_ID=your_access_key_here
-AWS_SECRET_ACCESS_KEY=your_secret_key_here
-AWS_REGION=your_region_here
+3. Set up environment variables:
+```bash
+cp .env.example .env.local
+# Edit .env.local with your settings
 ```
 
-4. Run the development server:
+4. Run development server:
 ```bash
 npm run dev
 ```
 
-5. Open [http://localhost:3000](http://localhost:3000) in your browser.
+5. Open [http://localhost:3000](http://localhost:3000)
 
 ## Features
 
 - Text to speech conversion
-- Multiple voice options
 - Podcast-style audio processing
-- Kubernetes deployment support
-- Prometheus/Grafana monitoring
+- Multiple voice options
+- Real-time conversion status
+- Audio preview and download
 
 ## Development
 
-### Running Tests
-```bash
-npm run test
-```
+### Available Scripts
 
-### Building for Production
 ```bash
+# Development
+npm run dev
+
+# Build
 npm run build
-```
 
-### Running Linter
-```bash
+# Production
+npm start
+
+# Testing
+npm test
+
+# Linting
 npm run lint
 ```
 
-## Deployment
-
 ### Docker Build
+
 ```bash
-docker build -t podcast-converter:latest .
+docker build -t podcast-converter .
+docker run -p 3000:3000 podcast-converter
 ```
 
 ### Kubernetes Deployment
-1. Create namespaces:
-```bash
-kubectl create namespace podcast-converter
-kubectl create namespace monitoring
-```
 
-2. Apply Kubernetes configurations:
+1. Update configurations in `k8s/base/config/`
+2. Deploy:
 ```bash
 kubectl apply -f k8s/base/config/
 kubectl apply -f k8s/base/deployments/
 kubectl apply -f k8s/base/services/
 kubectl apply -f k8s/base/ingress/
-kubectl apply -f k8s/base/monitoring/
 ```
 
-## Monitoring
+## CI/CD
 
-- Prometheus metrics available at `/metrics`
-- Grafana dashboards for visualization
-- Alert manager for notifications
+GitHub Actions workflows:
 
-## Environment Variables
+- `ci.yml`: Runs on pull requests and pushes to main/develop
+  - Linting
+  - Testing
+  - Building
 
-| Variable | Description | Required |
-|----------|-------------|----------|
-| AWS_ACCESS_KEY_ID | AWS Access Key | Yes |
-| AWS_SECRET_ACCESS_KEY | AWS Secret Key | Yes |
-| AWS_REGION | AWS Region | Yes |
+- `cd.yml`: Runs on pushes to main
+  - Docker image building
+  - Container registry pushing
+  - Kubernetes deployment
 
 ## Contributing
 
 1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push to branch (`git push origin feature/amazing-feature`)
+5. Open Pull Request
 
 ## License
 
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-## Support
-
-For support, please open an issue in the GitHub repository.
-
-## Acknowledgments
-
-- Next.js team for the amazing framework
-- AWS for Polly service
-- Kubernetes community
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
