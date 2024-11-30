@@ -20,29 +20,67 @@ This project converts text into podcast-style discussions using Google's Gemini 
 - Kubernetes deployment ready
 - CI/CD pipeline with GitHub Actions
 
-## Project Structure
-```
+# Project Structure
+```bash
 podcast-converter/
 ├── src/
-│   ├── app/                    # Next.js app directory
-│   │   ├── api/               # API routes
-│   │   ├── layout.tsx
-│   │   └── page.tsx
-│   ├── components/            # React components
-│   │   └── ui/               # UI components
-│   └── lib/                  # Utility functions
-├── k8s/                      # Kubernetes configurations
+│   ├── app/
+│   │   ├── api/
+│   │   │   └── convert/
+│   │   │       └── route.ts       # API endpoint for conversion
+│   │   ├── layout.tsx             # Root layout component
+│   │   ├── page.tsx               # Main application page
+│   │   └── globals.css            # Global styles
+│   ├── components/
+│   │   └── ui/
+│   │       ├── button.tsx         # Button component
+│   │       └── textarea.tsx       # Textarea component
+│   └── lib/
+│       └── utils.ts               # Utility functions
+├── k8s/
 │   └── base/
 │       ├── deployments/
+│       │   └── deployment.yaml    # Kubernetes deployment config
 │       ├── services/
+│       │   └── service.yaml       # Kubernetes service config
 │       ├── config/
-│       ├── ingress/
-│       └── monitoring/
-├── .github/                  # GitHub Actions workflows
+│       │   └── configmap.yaml     # ConfigMap for environment variables
+│       └── ingress/
+│           └── ingress.yaml       # Ingress configuration
+├── terraform/
+│   ├── environments/
+│   │   ├── dev/
+│   │   │   ├── main.tf
+│   │   │   └── variables.tfvars
+│   │   ├── staging/
+│   │   │   ├── main.tf
+│   │   │   └── variables.tfvars
+│   │   └── prod/
+│   │       ├── main.tf
+│   │       └── variables.tfvars
+│   ├── modules/
+│   │   └── podcast-converter/
+│   │       ├── main.tf
+│   │       ├── variables.tf
+│   │       └── outputs.tf
+│   ├── provider.tf
+│   ├── variables.tf
+│   ├── vpc.tf
+│   ├── eks.tf
+│   ├── s3.tf
+│   ├── iam.tf
+│   └── monitoring.tf
+├── .github/
 │   └── workflows/
-│       ├── ci.yml
-│       └── cd.yml
-└── public/                   # Static files
+│       ├── ci.yml                 # CI workflow
+│       └── cd.yml                 # CD workflow
+├── public/
+│   └── ...                        # Static assets
+├── .gitignore
+├── next.config.js
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
 
 ## Prerequisites
