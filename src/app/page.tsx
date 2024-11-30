@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Button } from '@/components/Button';
-import { TextArea } from '@/components/TextArea';
+import { Button } from '@/components/ui/button';
+import { TextArea } from '@/components/ui/textarea';
 
 interface ConversionStatus {
   status: 'idle' | 'converting' | 'done' | 'error';

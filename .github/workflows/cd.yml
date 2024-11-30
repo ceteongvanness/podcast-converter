@@ -49,6 +49,11 @@ jobs:
           AWS_ACCESS_KEY_ID=${{ env.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY=${{ env.AWS_SECRET_ACCESS_KEY }}
 
+          - name: Update kubeconfig
+          run: |
+            aws eks update-kubeconfig --name podcast-converter-cluster --region ${{ env.AWS_REGION }}
+    
+
   deploy-staging:
     needs: build
     runs-on: ubuntu-latest
