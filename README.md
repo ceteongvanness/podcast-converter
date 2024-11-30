@@ -7,7 +7,7 @@ A Next.js application that converts text content into podcast-style audio using 
 This project converts text into podcast-style discussions using Google's Gemini AI and AWS Polly, deployed on Kubernetes with infrastructure managed by Terraform.
 
 ## Architecture
-
+![](https://github.com/ceteongvanness/podcast-converter/blob/main/image/Screenshot%202024-11-30%20at%202.29.04%E2%80%AFPM.png)
 
 ## Features
 
