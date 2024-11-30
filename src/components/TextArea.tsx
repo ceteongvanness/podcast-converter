@@ -1,93 +1,14 @@
-import React, { FormEvent } from 'react';
-import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Card } from '@/components/ui/card';
+import React from 'react';
 
-interface ConversionStatus {
-  status: 'idle' | 'converting' | 'done' | 'error';
-  audioUrl?: string | null;
-  script?: string | null;
-  error?: string | null;
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+  className?: string;
 }
 
-export default function PodcastConverter() {
-  const [content, setContent] = React.useState<string>('');
-  const [status, setStatus] = React.useState<ConversionStatus>({
-    status: 'idle'
-  });
-
-  const handleConvert = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!content.trim()) return;
-
-    try {
-      setStatus({ status: 'converting' });
-
-      const response = await fetch('/api/convert', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: content }),
-      });
-
-      if (!response.ok) throw new Error('Conversion failed');
-
-      const data = await response.json();
-      setStatus({ 
-        status: 'done', 
-        audioUrl: data.audioUrl, 
-        script: data.script 
-      });
-    } catch (err) {
-      setStatus({ 
-        status: 'error', 
-        error: err instanceof Error ? err.message : 'Conversion failed' 
-      });
-    }
-  };
-
+export function Textarea({ className = '', ...props }: TextareaProps) {
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-6">
-      <Card className="p-6">
-        <form onSubmit={handleConvert} className="space-y-4">
-          <Textarea
-            placeholder="Paste your content here to convert into a podcast-style discussion..."
-            value={content}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
-            className="min-h-[200px]"
-            disabled={status.status === 'converting'}
-          />
-          <Button
-            type="submit"
-            disabled={status.status === 'converting' || !content.trim()}
-            className="w-full"
-          >
-            {status.status === 'converting' ? 'Converting...' : 'Convert to Podcast'}
-          </Button>
-        </form>
-      </Card>
-
-      {status.error && (
-        <div className="bg-red-50 text-red-700 p-4 rounded">
-          {status.error}
-        </div>
-      )}
-
-      {status.script && (
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Discussion Script</h3>
-          <div className="whitespace-pre-wrap">{status.script}</div>
-        </Card>
-      )}
-
-      {status.audioUrl && (
-        <Card className="p-6">
-          <h3 className="text-lg font-semibold mb-4">Generated Podcast</h3>
-          <audio controls className="w-full">
-            <source src={status.audioUrl} type="audio/mp3" />
-            Your browser does not support the audio element.
-          </audio>
-        </Card>
-      )}
-    </div>
+    <textarea
+      className={`w-full p-4 border border-gray-200 rounded-2xl resize-none focus:outline-none focus:ring-0 focus:border-gray-300 placeholder:text-gray-500 ${className}`}
+      {...props}
+    />
   );
 }
