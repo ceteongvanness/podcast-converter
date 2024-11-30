@@ -1,6 +1,8 @@
+'use client';
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';  // Changed from TextArea to Textarea
+import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
 
 interface ConversionStatus {
@@ -49,7 +51,7 @@ export default function Home() {
     <div className="max-w-4xl mx-auto p-6 space-y-6">
       <Card className="p-6">
         <form onSubmit={handleConvert} className="space-y-4">
-          <Textarea  // Changed from TextArea to Textarea
+          <Textarea
             placeholder="Paste your content here to convert into a podcast-style discussion..."
             value={content}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
