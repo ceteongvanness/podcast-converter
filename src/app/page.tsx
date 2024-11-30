@@ -1,26 +1,28 @@
-'use client';
-
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { TextArea } from '@/components/ui/textarea';
+import { Textarea } from '@/components/ui/textarea';  // Changed from TextArea to Textarea
+import { Card } from '@/components/ui/card';
 
 interface ConversionStatus {
   status: 'idle' | 'converting' | 'done' | 'error';
-  audioUrl?: string;
-  error?: string;
+  audioUrl?: string | null;
+  script?: string | null;
+  error?: string | null;
 }
 
 export default function Home() {
   const [content, setContent] = useState('');
-  const [status, setStatus] = useState<ConversionStatus>({ status: 'idle' });
+  const [status, setStatus] = useState<ConversionStatus>({
+    status: 'idle'
+  });
 
-  const handleConvert = async (e: React.FormEvent) => {
+  const handleConvert = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (!content.trim()) return;
 
     try {
       setStatus({ status: 'converting' });
-      
+
       const response = await fetch('/api/convert', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -28,32 +30,32 @@ export default function Home() {
       });
 
       if (!response.ok) throw new Error('Conversion failed');
-      
+
       const data = await response.json();
-      setStatus({ status: 'done', audioUrl: data.audioUrl });
-    } catch (error) {
+      setStatus({ 
+        status: 'done', 
+        audioUrl: data.audioUrl, 
+        script: data.script 
+      });
+    } catch (err) {
       setStatus({ 
         status: 'error', 
-        error: error instanceof Error ? error.message : 'Unknown error occurred' 
+        error: err instanceof Error ? err.message : 'Conversion failed' 
       });
     }
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 py-8">
-      <div className="container mx-auto max-w-2xl px-4">
-        <h1 className="text-3xl font-bold text-center mb-8">
-          Text to Podcast Converter
-        </h1>
-
+    <div className="max-w-4xl mx-auto p-6 space-y-6">
+      <Card className="p-6">
         <form onSubmit={handleConvert} className="space-y-4">
-          <TextArea
+          <Textarea  // Changed from TextArea to Textarea
+            placeholder="Paste your content here to convert into a podcast-style discussion..."
             value={content}
-            onChange={(e) => setContent(e.target.value)}
-            placeholder="Paste your content here..."
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setContent(e.target.value)}
+            className="min-h-[200px]"
             disabled={status.status === 'converting'}
           />
-          
           <Button
             type="submit"
             disabled={status.status === 'converting' || !content.trim()}
@@ -62,22 +64,30 @@ export default function Home() {
             {status.status === 'converting' ? 'Converting...' : 'Convert to Podcast'}
           </Button>
         </form>
+      </Card>
 
-        {status.error && (
-          <div className="mt-4 p-4 bg-red-100 text-red-700 rounded">
-            {status.error}
-          </div>
-        )}
+      {status.error && (
+        <div className="bg-red-50 text-red-700 p-4 rounded">
+          {status.error}
+        </div>
+      )}
 
-        {status.audioUrl && (
-          <div className="mt-4">
-            <audio controls className="w-full">
-              <source src={status.audioUrl} type="audio/mp3" />
-              Your browser does not support the audio element.
-            </audio>
-          </div>
-        )}
-      </div>
-    </main>
+      {status.script && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Discussion Script</h3>
+          <div className="whitespace-pre-wrap">{status.script}</div>
+        </Card>
+      )}
+
+      {status.audioUrl && (
+        <Card className="p-6">
+          <h3 className="text-lg font-semibold mb-4">Generated Podcast</h3>
+          <audio controls className="w-full">
+            <source src={status.audioUrl} type="audio/mp3" />
+            Your browser does not support the audio element.
+          </audio>
+        </Card>
+      )}
+    </div>
   );
 }
